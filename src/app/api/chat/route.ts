@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai('gpt-4o'), // Change to 'gpt-3.5-turbo' if you want cheaper/faster
+    model: openai('gpt-3.5-turbo'), // Change to 'gpt-3.5-turbo' if you want cheaper/faster
     messages,
   });
 
