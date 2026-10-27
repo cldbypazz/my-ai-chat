@@ -79,14 +79,7 @@ export default function Chat() {
         const entries: ChatSummary[] = await response.json();
         if (controller.signal.aborted) return;
         setHistory(entries);
-        if (entries.length) {
-          const chat = await fetch(`/api/chats?id=${encodeURIComponent(entries[0].id)}`, { signal: controller.signal, cache: 'no-store' });
-          if (!chat.ok) throw new Error('Could not reopen your last chat.');
-          const data = await chat.json();
-          if (controller.signal.aborted) return;
-          setActiveId(data.id);
-          setMessages(data.messages);
-        } else setActiveId(crypto.randomUUID());
+        setActiveId(crypto.randomUUID());
       } catch {
         if (!controller.signal.aborted) {
           setActiveId(crypto.randomUUID());
@@ -230,7 +223,7 @@ export default function Chat() {
           aria-label={sidebarOpen ? 'Hide chat history' : 'Show chat history'} aria-expanded={sidebarOpen} aria-controls="chat-history">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M9 4v16M13 9h4M13 13h4" /></svg>
         </button>
-        <div className="chat-title"><h1>artiint</h1><p>a free ai for you</p></div>
+        <div className="chat-title"><h1>artiint</h1><p>free artificial intelligence</p></div>
         <button type="button" className="new-chat" onClick={newChat} disabled={busy || saving || historyLoading || Boolean(saveError)}>New chat <span aria-hidden="true">+</span></button>
       </header>
       <section ref={viewport} className="messages" aria-label="Conversation" aria-busy={busy || historyLoading} onScroll={() => {
