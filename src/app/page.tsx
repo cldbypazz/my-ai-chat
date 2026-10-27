@@ -1,57 +1,96 @@
 'use client';
 
-import { useChat } from 'ai/react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+
+type Message = { id: string; role: 'user' | 'assistant'; content: string };
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const end = useRef<HTMLDivElement>(null);
+  const sending = useRef(false);
+
+  useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  async function send(event: FormEvent) {
+    event.preventDefault();
+    if (!input.trim() || sending.current) return;
+    sending.current = true;
+    const question = input.trim();
+    const user: Message = { id: crypto.randomUUID(), role: 'user', content: question };
+    const history = [...messages, user];
+    const replyId = crypto.randomUUID();
+    setMessages(history);
+    setInput('');
+    setError('');
+    setBusy(true);
+    let received = false;
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history.map(({ role, content }) => ({ role, content })) }),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || 'The assistant could not reply. Please try again.');
+      }
+      if (!response.body) throw new Error('No reply arrived. Please try again.');
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let content = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        content += decoder.decode(value, { stream: !done });
+        if (content) {
+          received = true;
+          const reply: Message = { id: replyId, role: 'assistant', content };
+          setMessages([...history, reply]);
+        }
+        if (done) break;
+      }
+      if (!received) throw new Error('The assistant returned an empty reply. Please try again.');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Connection interrupted. Please try again.');
+      // Restore the question for a retry without duplicating it in the conversation.
+      if (!received) { setMessages(messages); setInput(question); }
+    } finally {
+      sending.current = false;
+      setBusy(false);
+    }
+  }
 
   return (
-    <div className="flex flex-col w-full h-screen max-w-md mx-auto bg-gray-50">
-      {/* Header */}
-      <header className="p-4 bg-white border-b shadow-sm sticky top-0 z-10">
-        <h1 className="text-xl font-bold text-center text-gray-800">My AI Assistant</h1>
+    <main className="chat">
+      <header>
+        <div className="brand-mark" aria-hidden="true">a</div>
+        <div><h1>My AI Assistant</h1><p>A little space for big questions.</p></div>
       </header>
-
-      {/* Chat Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
-        {messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-10">
-            <p>👋 Hello! I'm your AI. Ask me anything!</p>
-          </div>
-        )}
-        {messages.map(m => (
-          <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] p-3 rounded-lg ${
-              m.role === 'user' 
-                ? 'bg-blue-600 text-white rounded-br-none' 
-                : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm'
-            }`}>
-              <span className="block text-sm font-bold mb-1 opacity-70">
-                {m.role === 'user' ? 'You' : 'AI'}
-              </span>
-              <div className="whitespace-pre-wrap">{m.content}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Input Area */}
-      <div className="fixed bottom-0 w-full max-w-md bg-white border-t p-4">
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            value={input}
-            placeholder="Type a message..."
-            onChange={handleInputChange}
-          />
-          <button 
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors"
-          >
-            Send
-          </button>
+      <section className="messages" aria-label="Conversation" aria-busy={busy}>
+        {messages.length === 0 && <div className="welcome">
+          <span className="eyebrow">YOUR NEXT IDEA STARTS HERE</span>
+          <h2>What’s on<br />your mind?</h2>
+          <p>Ask a question, untangle an idea, or start with something you’re curious about.</p>
+        </div>}
+        {messages.map(message => <article key={message.id} className={`message ${message.role}`}>
+          <span className="speaker">{message.role === 'user' ? 'You' : 'Assistant'}</span>
+          <div>{message.content}</div>
+        </article>)}
+        {busy && <p className="thinking" role="status">Working on your reply…</p>}
+        <div ref={end} />
+      </section>
+      <footer>
+        {error && <p className="error" role="alert">{error}</p>}
+        <form onSubmit={send}>
+          <label className="sr-only" htmlFor="message">Your message</label>
+          <input id="message" value={input} maxLength={16000} placeholder="Type a message…"
+            onChange={event => setInput(event.target.value)} disabled={busy} autoComplete="off" />
+          <button type="submit" disabled={busy || !input.trim()}>{busy ? 'Thinking…' : 'Send'}<span aria-hidden="true"> ↗</span></button>
         </form>
-      </div>
-    </div>
+        <p className="note">AI can make mistakes. Check important information.</p>
+      </footer>
+    </main>
   );
 }
