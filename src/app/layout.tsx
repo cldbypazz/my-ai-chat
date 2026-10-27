@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'My AI Assistant',
+  title: 'artiint',
   description: 'A simple space to ask questions and think things through.',
 };
 

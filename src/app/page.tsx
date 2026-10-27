@@ -66,7 +66,7 @@ export default function Chat() {
     <main className="chat">
       <header>
         <div className="brand-mark" aria-hidden="true">a</div>
-        <div><h1>My AI Assistant</h1><p>A little space for big questions.</p></div>
+        <div><h1>artiint</h1><p>a free ai for you</p></div>
       </header>
       <section className="messages" aria-label="Conversation" aria-busy={busy}>
         {messages.length === 0 && <div className="welcome">
@@ -75,7 +75,7 @@ export default function Chat() {
           <p>Ask a question, untangle an idea, or start with something you’re curious about.</p>
         </div>}
         {messages.map(message => <article key={message.id} className={`message ${message.role}`}>
-          <span className="speaker">{message.role === 'user' ? 'You' : 'Assistant'}</span>
+          <span className="speaker">{message.role === 'user' ? 'You' : 'artiint'}</span>
           <div>{message.content}</div>
         </article>)}
         {busy && <p className="thinking" role="status">Working on your reply…</p>}
