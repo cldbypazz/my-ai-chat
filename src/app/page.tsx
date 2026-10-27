@@ -17,6 +17,7 @@ export default function Chat() {
   const followBottom = useRef(true);
   const sending = useRef(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarPreferenceLoaded, setSidebarPreferenceLoaded] = useState(false);
   const [history, setHistory] = useState<ChatSummary[]>([]);
   const [activeId, setActiveId] = useState('');
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -24,6 +25,24 @@ export default function Chat() {
   const [saveError, setSaveError] = useState('');
   const [saving, setSaving] = useState(false);
   const [showLatest, setShowLatest] = useState(false);
+
+  useEffect(() => {
+    try {
+      setSidebarOpen(document.cookie.split('; ').includes('artiint_history_open=true'));
+    } catch {
+      // The sidebar still works when browser storage is blocked.
+    }
+    setSidebarPreferenceLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!sidebarPreferenceLoaded) return;
+    try {
+      document.cookie = `artiint_history_open=${sidebarOpen}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+    } catch {
+      // Keep the current toggle usable without persistence.
+    }
+  }, [sidebarOpen, sidebarPreferenceLoaded]);
 
   useEffect(() => {
     if (!sidebarOpen) return;
@@ -116,7 +135,6 @@ export default function Chat() {
     setError('');
     followBottom.current = true;
     setShowLatest(false);
-    setSidebarOpen(false);
   }
 
   async function openChat(id: string) {
@@ -196,7 +214,7 @@ export default function Chat() {
       {sidebarOpen && <button className="history-scrim" aria-label="Close chat history" onClick={() => setSidebarOpen(false)} />}
       <aside ref={historyPanel} id="chat-history" className="chat-history" aria-label="Chat history" hidden={!sidebarOpen}>
         <div className="history-heading"><h2>Chats</h2><button type="button" className="icon-button" aria-label="Close chat history" onClick={() => setSidebarOpen(false)}>×</button></div>
-        <p className="history-note">Saved online for this browser. Clearing cookies disconnects your history.</p>
+        <p className="history-note">Chats are saved online for this browser. Clearing cookies clears your chat history.</p>
         {historyLoading && <p className="history-note" role="status">Loading chats…</p>}
         {historyError && <p className="error" role="status">{historyError}</p>}
         {!historyLoading && history.length === 0 && !historyError && <p className="history-note">Your conversations appear here after a reply.</p>}
