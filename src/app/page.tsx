@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import AssistantMessage from '../components/assistant-message';
 
 type Message = { id: string; role: 'user' | 'assistant'; content: string };
 
@@ -71,7 +72,9 @@ export default function Chat() {
       <section className="messages" aria-label="Conversation" aria-busy={busy}>
         {messages.map(message => <article key={message.id} className={`message ${message.role}`}>
           <span className="speaker">{message.role === 'user' ? 'You' : 'artiint'}</span>
-          <div>{message.content}</div>
+          {message.role === 'assistant'
+            ? <AssistantMessage content={message.content} streaming={busy && message.id === messages[messages.length - 1]?.id} />
+            : <div>{message.content}</div>}
         </article>)}
         {busy && <p className="thinking" role="status">Working on your reply…</p>}
         <div ref={end} />

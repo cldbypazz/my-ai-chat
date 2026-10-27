@@ -31,3 +31,20 @@ button:focus-visible { outline: 2px solid #315941; outline-offset: 3px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 480px) { header { padding: 18px; } .messages { padding: 24px 18px; } footer { padding: 14px 16px; } }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* Copyable drafts use the same sage borders and paper tones as the composer. */
+.assistant { max-width: 100%; min-width: 0; }
+.message > .assistant-content { white-space: normal; }
+.reply-text { white-space: pre-wrap; }
+.copy-panel { margin: 14px 0; min-width: 0; overflow: hidden; border: 1px solid #c5cfbd; border-radius: 12px; background: #f4f6ef; }
+.panel-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 14px; border-bottom: 1px solid #dbe2d4; background: #e9eee2; }
+.panel-label { color: #435c45; font-size: 12px; font-weight: bold; overflow-wrap: anywhere; }
+.panel-writing { font-weight: normal; color: #627166; }
+.copy-button { padding: 6px 12px; font-size: 12px; }
+.copy-panel pre { margin: 0; padding: 18px; max-height: 480px; overflow: auto; white-space: pre; tab-size: 4; font: 13px/1.75 'SFMono-Regular', Consolas, 'Liberation Mono', monospace; overflow-wrap: normal; }
+.copy-panel code { font: inherit; }
+.prose-panel { background: #fffef9; }
+.prose-panel pre { font: 16px/1.8 Georgia, serif; white-space: pre-wrap; overflow-wrap: anywhere; }
+.copy-panel pre:focus-visible { outline: 2px solid #68865e; outline-offset: -3px; }
+.copy-feedback { margin: 0; padding: 0 18px 14px; font-size: 12px; color: #9a3c27; }
+@media (max-width: 480px) { .copy-panel pre { padding: 14px; max-height: 55dvh; } }

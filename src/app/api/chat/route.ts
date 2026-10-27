@@ -31,7 +31,13 @@ export async function POST(req: Request) {
     const client = new OpenAI();
     const completion = await client.chat.completions.create({
       model: 'gpt-4o-mini',
-      messages: messages.map(({ role, content }) => ({ role, content })),
+      messages: [
+        {
+          role: 'system',
+          content: 'You are artiint, a helpful assistant. When creating content the user is meant to copy (scripts, code, essays, emails, letters, poems, or other drafts), put the finished content in its own fenced block. Use a language identifier for code (such as python, javascript, html, or bash), preserving indentation and line breaks. For essays and other prose, use a fenced block labeled text with readable paragraphs and plain text headings; do not add Markdown formatting characters inside a text block. Keep explanations outside the blocks. Use separate blocks for separate files or drafts. Choose a fence longer than any backtick sequence inside the content. Ordinary conversation and explanations do not need a block.',
+        },
+        ...messages.map(({ role, content }) => ({ role, content })),
+      ],
       max_completion_tokens: 2048,
       stream: true,
     }, { signal: req.signal });
