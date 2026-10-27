@@ -47,14 +47,6 @@ export default function Chat() {
   useEffect(() => {
     if (!sidebarOpen) return;
     historyPanel.current?.querySelector('button')?.focus({ preventScroll: true });
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setSidebarOpen(false);
-        historyToggle.current?.focus({ preventScroll: true });
-      }
-    }
-    window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
   }, [sidebarOpen]);
 
   function scrollToLatest() {
@@ -144,7 +136,6 @@ export default function Chat() {
       setError('');
       setHistoryError('');
       setShowLatest(false);
-      setSidebarOpen(false);
     } catch { setHistoryError('This chat could not be opened. Please try again.'); }
     finally { setHistoryLoading(false); }
   }
@@ -204,9 +195,12 @@ export default function Chat() {
 
   return (
     <div className={`chat-shell ${sidebarOpen ? 'history-open' : ''}`}>
-      {sidebarOpen && <button className="history-scrim" aria-label="Close chat history" onClick={() => setSidebarOpen(false)} />}
+      {sidebarOpen && <div className="history-scrim" aria-hidden="true" />}
       <aside ref={historyPanel} id="chat-history" className="chat-history" aria-label="Chat history" hidden={!sidebarOpen}>
-        <div className="history-heading"><h2>Chats</h2><button type="button" className="icon-button" aria-label="Close chat history" onClick={() => setSidebarOpen(false)}>×</button></div>
+        <div className="history-heading"><h2>Chats</h2><button type="button" className="icon-button" aria-label="Close chat history" onClick={() => {
+          setSidebarOpen(false);
+          historyToggle.current?.focus({ preventScroll: true });
+        }}>×</button></div>
         <p className="history-note">Chats are saved online for this browser. Clearing cookies clears your chat history.</p>
         {historyLoading && <p className="history-note" role="status">Loading chats…</p>}
         {historyError && <p className="error" role="status">{historyError}</p>}
