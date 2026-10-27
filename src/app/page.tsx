@@ -69,11 +69,6 @@ export default function Chat() {
         <div><h1>artiint</h1><p>a free ai for you</p></div>
       </header>
       <section className="messages" aria-label="Conversation" aria-busy={busy}>
-        {messages.length === 0 && <div className="welcome">
-          <span className="eyebrow">YOUR NEXT IDEA STARTS HERE</span>
-          <h2>What’s on<br />your mind?</h2>
-          <p>Ask a question, untangle an idea, or start with something you’re curious about.</p>
-        </div>}
         {messages.map(message => <article key={message.id} className={`message ${message.role}`}>
           <span className="speaker">{message.role === 'user' ? 'You' : 'artiint'}</span>
           <div>{message.content}</div>
