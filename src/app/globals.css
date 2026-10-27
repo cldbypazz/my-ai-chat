@@ -48,3 +48,44 @@ button:focus-visible { outline: 2px solid #315941; outline-offset: 3px; }
 .copy-panel pre:focus-visible { outline: 2px solid #68865e; outline-offset: -3px; }
 .copy-feedback { margin: 0; padding: 0 18px 14px; font-size: 12px; color: #9a3c27; }
 @media (max-width: 480px) { .copy-panel pre { padding: 14px; max-height: 55dvh; } }
+
+/* Keep the document fixed; only the conversation and history list can scroll. */
+html, body { height: 100%; overflow: hidden; }
+.chat-shell { display: flex; max-width: 1040px; height: 100dvh; margin: 0 auto; overflow: hidden; position: relative; }
+.chat { flex: 1; width: 100%; min-width: 0; min-height: 0; height: 100%; overflow: hidden; }
+.chat-header, footer { flex-shrink: 0; }
+.messages { min-height: 0; min-width: 0; overscroll-behavior: contain; overflow-anchor: none; }
+.copy-panel pre { overscroll-behavior: contain; }
+.chat-header { gap: 12px; }
+.chat-title { flex: 1; min-width: 0; }
+.icon-button { display: inline-grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; padding: 6px; border: 1px solid #c5cfbd; color: #315941; background: transparent; }
+.icon-button:hover:not(:disabled) { color: #fff; }
+.new-chat { padding: 10px 12px; }
+.new-chat span { margin-left: 6px; }
+.chat-history { width: 260px; flex-shrink: 0; flex-direction: column; gap: 14px; padding: 22px 16px; background: #edf1e6; border-right: 1px solid #d3dccb; overflow: hidden; }
+.chat-history:not([hidden]) { display: flex; }
+.history-heading { display: flex; justify-content: space-between; align-items: center; }
+.history-heading h2 { margin: 0; font: normal 26px Georgia, serif; letter-spacing: -.5px; }
+.history-note { font-size: 12px; line-height: 1.6; color: #627166; margin: 0; }
+.chat-history nav { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.history-chat { display: block; width: 100%; padding: 12px; margin-bottom: 7px; color: #25382f; background: transparent; text-align: left; white-space: normal; border: 1px solid transparent; }
+.history-chat span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-chat small { display: block; margin-top: 5px; color: #627166; font-size: 10px; }
+.history-chat.active { background: #fafbf7; border-color: #c5cfbd; }
+.history-chat:hover:not(:disabled) { background: #dce5d3; }
+.history-scrim { display: none; }
+.latest-button { display: block; margin: -4px auto 12px; padding: 6px 12px; background: #e7eddf; color: #315941; font-size: 12px; }
+.latest-button:hover:not(:disabled) { color: #fff; }
+.save-notice { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 12px; color: #9a3c27; }
+.save-notice button { padding: 7px 10px; font-size: 12px; }
+footer { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+@media (max-width: 700px) {
+  .chat-history { position: absolute; inset: 0 auto 0 0; width: min(82vw, 300px); z-index: 30; }
+  .history-scrim { display: block; position: absolute; inset: 0; z-index: 20; width: 100%; border-radius: 0; background: #25382f66; }
+  .history-scrim:hover:not(:disabled) { background: #25382f66; }
+}
+@media (max-width: 480px) {
+  .chat-header { padding: 16px; gap: 9px; }
+  .chat-title p { font-size: 11px; }
+  .new-chat { font-size: 12px; padding: 9px 10px; }
+}

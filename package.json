@@ -9,6 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@netlify/database": "^2.0.1",
+    "drizzle-orm": "^1.0.0-beta.22",
     "next": "^16.0.0",
     "openai": "^6.0.0",
     "react": "^19.0.0",
@@ -18,6 +20,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "drizzle-kit": "^1.0.0-beta.22",
     "typescript": "^5.9.0"
   }
 }
