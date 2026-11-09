@@ -5,6 +5,8 @@
 [build.environment]
   NODE_VERSION = "22"
 
-# Process Next.js output into Netlify routes and server functions.
+# Required: processes the Next.js output into Netlify routes and the server
+# function that serves the home page and API routes. Without it, the deployed
+# site has no functions and every page returns "Page not found".
 [[plugins]]
   package = "@netlify/plugin-nextjs"
