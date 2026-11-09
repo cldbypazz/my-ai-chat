@@ -8,7 +8,7 @@ Use Node.js 22 or newer and run `npm ci`. Start the app with `netlify dev --port
 
 ## Deployment
 
-Netlify reads `netlify.toml`, runs the Next.js build, and publishes `.next` using its automatic Next.js adapter. The adapter serves both the home page and the `/api/chat` server route. Do not deploy the raw source directory as a static site.
+Netlify reads `netlify.toml`, runs the Next.js build, and publishes `.next` using the explicitly configured `@netlify/plugin-nextjs` adapter. The adapter creates the routing and server functions for the home page and API routes. Do not deploy the raw source directory or unprocessed `.next` output as a static site: neither includes the Netlify routing needed to serve this app.
 
 Chat uses the official OpenAI SDK and the `gpt-4o-mini` model. Netlify AI Gateway supplies the server-side credentials and base URL on a credit-based Netlify plan. Existing OpenAI environment settings take precedence if configured. No credentials are sent to the browser.
 

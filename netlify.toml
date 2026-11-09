@@ -4,3 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Process Next.js output into Netlify routes and server functions.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
